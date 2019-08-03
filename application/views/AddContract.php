@@ -13,11 +13,12 @@
   
 
   <!-- DataTales Example -->
-  <div class="card shadow mb-4">
-  <div class="c ard-header py-3" style="">
+  <div class="card shadow mb-4" id="printid">
+  <div class="c ard-header py-3" style="" >
     <div class="col-md-6" style="padding-right:1.25rem;padding-top: 0.5rem">
            <h4 class="m-0 font-weight-bold text-primary">إدخال عقد جديد</h4>
     </div>
+
   </div>
   
   <div class="card-body" style="padding-top:0;padding: 0">
@@ -29,19 +30,25 @@
     <div class="row">
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%">تاريخ العقد</div>
-          <div class="col-md-8" style="padding: 0">
+          <div class="col-md-8 input-group" style="padding: 0">
+          <span class="alertSpan">
+             <i class="far fa-calendar-alt"></i>
+            </span>
               <input readonly datetime-picker date-format="yyyy-MM-dd" readonly date-only ng-model="ctr.contract.contractDate"  ng-change="ctr.contract.contractDay = ctr.getDay(ctr.contract.contractDate)" class="form-control"/>
           </div>
         </div>
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%">يوم العقد</div>
           <div class="col-md-8" style="padding: 0">
-              <input readonly  ng-model="ctr.contract.contractDay"  class="form-control"/>
+              <input disabled  ng-model="ctr.contract.contractDay"  class="form-control"/>
           </div>
         </div>
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 1%">تاريخ الحجز*</div>
-          <div class="col-md-8" style="padding: 0">
+          <div class="col-md-8 input-group" style="padding: 0">
+          <span class="alertSpan">
+             <i class="far fa-calendar-alt"></i>
+            </span>
               <input readonly datetime-picker date-format="yyyy-MM-dd" readonly date-only ng-model="ctr.contract.date" class="form-control"/>
           </div>
         </div>
@@ -52,7 +59,7 @@
         <div class="col-md-8" style="padding: 0">
           <div class="input-group" style="display: block !important;">
               <ui-select allow-clear  ng-model="ctr.contract.type" theme="selectize"
-                ng-change = "ctr.contract.type.id == 'ساعي' ? ctr.contract.dayCount = null : ctr.contract.dayCount = 1 ;ctr.contract.type.id == 'يوم' ? ctr.contract.period = null : ''">
+                ng-change = "ctr.contract.type.id == 'ساعي' ? ctr.contract.dayCount = null : ctr.contract.dayCount = 1 ;ctr.contract.type.id == 'يوم' ? ctr.contract.period = null : '';ctr.contract.type.id == 'يوم' ? ctr.contract.value = null : ''">
                 <ui-select-match placeholder="
                 ">{{$select.selected.desc}}</ui-select-match>
                 <ui-select-choices repeat="item in ctr.reservTypeList | filter: $select.search">
@@ -72,7 +79,7 @@
         <div class="col-md-4" style="margin-top: 2%">الفترة*</div>
         <div class="col-md-8" style="padding: 0">
         <div class="input-group" style="display: block !important;">
-              <ui-select allow-clear  ng-model="ctr.contract.period" theme="selectize">
+              <ui-select allow-clear  ng-model="ctr.contract.period" theme="selectize" ng-disabled="ctr.contract.type.id == 'يوم'"  ng-change="ctr.setValue($select.selected.value)">
                 <ui-select-match placeholder="
                 ">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="item in ctr.periodList | filter: $select.search">
@@ -101,7 +108,7 @@
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%">مبلغ الحجز*</div>
           <div class="col-md-8" style="padding: 0">
-              <input ng-model="ctr.contract.value" class="form-control"/>
+              <input ng-model="ctr.contract.value" ng-model-options='{ debounce: 1000 }' ng-change="ctr.sumTotalValue()" type="number" class="form-control"/>
           </div>
         </div>
     </div>
@@ -109,10 +116,12 @@
     <div class="row" style="margin-top: 1%">
           <div class="col-md-6">
               <label style="font-weight: bold;">معلومات العميل</label>
+              &nbsp;&nbsp;&nbsp;
+              <label style="border-bottom: 1px solid "> أو</label>
+              &nbsp;&nbsp;&nbsp;
+              <label>  <a class="" href="" >إضافة عميل جديد</a></label>
           </div>
-          <div class="col-md-6" style="padding-left:1.25rem;text-align: left" >
-              <a class="" href="" >إضافة عميل جديد</a>
-          </div>
+
     </div>
     <div class="row">
         <div class="col-md-4">
@@ -133,13 +142,13 @@
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%;padding-left: 0">الهاتف الأول*</div>
           <div class="col-md-8" style="padding: 0">
-              <input readonly ui-br-phone-number-mask style="direction: ltr;text-align: right;" ng-model="ctr.contract.client.phone1" class="form-control"/>
+              <input disabled ui-br-phone-number-mask style="direction: ltr;text-align: right;" ng-model="ctr.contract.client.phone1" class="form-control"/>
           </div>
         </div>
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%;padding-left: 0"> الهاتف الثاني* </div>
           <div class="col-md-8" style="padding: 0">
-              <input readonly ui-br-phone-number-mask ng-model="ctr.contract.client.phone2" class="form-control" style="direction: ltr;   text-align: right;"/>
+              <input disabled ui-br-phone-number-mask ng-model="ctr.contract.client.phone2" class="form-control" style="direction: ltr;   text-align: right;"/>
           </div>
         </div>
     </div>
@@ -148,13 +157,13 @@
         <div class="col-md-4">
           <div class="col-md-4" style="margin-top: 2%;padding-left: 0">الهاتف الثالث</div>
           <div class="col-md-8" style="padding: 0">
-          <input readonly ui-br-phone-number-mask  ng-model="ctr.contract.client.phone3" class="form-control" style="direction: ltr;text-align: right;"/>
+          <input disabled ui-br-phone-number-mask  ng-model="ctr.contract.client.phone3" class="form-control" style="direction: ltr;text-align: right;"/>
         </div>
       </div>
       <div class="col-md-4">
         <div class="col-md-4" style="margin-top: 2%;padding-left: 0">البريد الالكتروني</div>
         <div class="col-md-8" style="padding: 0">
-        <input readonly type="text" ng-model="ctr.contract.client.email" class="form-control"/>
+        <input disabled type="text" ng-model="ctr.contract.client.email" class="form-control"/>
         
         </div>
       </div>
@@ -193,7 +202,7 @@
             </div> 
         </div>
         <div class="col-md-2" style="padding-left:1.25rem;margin-top: 5px" >
-              <a class="" href=""  style="">إضافة للقائمة  <i class="far fa-plus-square"></i></a>
+              <a class="" href=""  style="" ng-click="ctr.AddService()">إضافة للقائمة  <i class="far fa-plus-square"></i></a>
         </div>
     </div>
     <div class="row ">
@@ -203,9 +212,10 @@
                   <thead>
                     <tr>
                       <th>الخدمة  </th>
-                      <th>العدد  </th>
                       <th>الكلفة الإجمالية  </th>
-                     <th></th>
+                        <th>العدد  </th>
+
+                        <th></th>
                      
                      
                     </tr>
@@ -215,15 +225,15 @@
                   <tr ng-if=" ctr.contract.services.length > 0" ng-repeat="model in ctr.contract.services"  ng-cloak>
                     
 
-                    <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.name}}</td>
-                     <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.phone1}}</td>
-                        <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.phone1}}</td>
+                    <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.serviceName}}</td>
+                      <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.serviceValue}}</td>
+                      <td data-toggle="modal" href="#EditModal"  ng-click ="ctr.editModel = model"  style="    cursor: pointer;">{{model.serviceCount}}</td>
 
-                    <td style="text-align: center"><a data-toggle="modal" href="#DeleteModal" href="" ng-click="ctr.deletedModel = model"><i class="far fa-trash-alt" style="color:#ff000094"></i></a></td>
+                    <td style="text-align: center"><a  href="" ng-click="ctr.DeleteService($index)"><i class="far fa-trash-alt" style="color:#ff000094"></i></a></td>
                   </tr>
                   <tr ng-if=" ctr.contract.services.length > 0">
                     <td  style="font-weight: bold">مجموع الخدمات</td>
-                    <td colspan="2"></td>
+                    <td colspan="3">{{ctr.totalServiceValue}}</td>
 
                   </tr>
                   <tr ng-if=" ctr.contract.services.length == 0" style="text-align: center">
@@ -254,26 +264,26 @@
                     <div class="row" style="margin-top: 1%">
                         <div class="col-md-4" style="margin-top: 1%">الإجمالي قبل الضريبة</div>
                         <div class="col-md-8" style="padding: 0">
-                         <input readonly ui-br-phone-number-mask  date-only ng-model="ctr.addModel.date" class="form-control"/>
+                         <input disabled type="number"    ng-model="ctr.contract.totalValue" class="form-control"/>
                         </div>
                     </div>
                     <div class="row" style="margin-top: 1%">
                         <div class="col-md-4" style="margin-top: 1%">القيمة المضافة </div>
                         <div class="col-md-8" style="padding: 0">
-                           <input readonly ui-br-phone-number-mask  date-only ng-model="ctr.addModel.date" class="form-control"/>
+                           <input disabled   ng-model="ctr.contract.vat" class="form-control"/>
                         </div>
                     </div>
                     <div class="row" style="margin-top: 1%">
                           <div class="col-md-4" style="margin-top: 1%">الإجمالي بعد الضريبة</div>
                           <div class="col-md-8" style="padding: 0">
-                             <input readonly ui-br-phone-number-mask  date-only ng-model="ctr.addModel.date" class="form-control"/>
+                             <input disabled ng-model="ctr.contract.netValue" class="form-control"/>
                           </div>
                     </div>
                     <div class="row" style="margin-top: 1%">
                          <div class="col-md-4" style="margin-top: 1%">الدفعة الأولى</div>
                          <div class="col-md-8" style="padding: 0">
                            <div class="input-group" style="display: block !important;">
-                              <ui-select allow-clear  ng-model="ctr.editModel.client" theme="selectize">
+                              <ui-select allow-clear  ng-model="ctr.contract.payType" theme="selectize">
                                 <ui-select-match placeholder="
                                 ">{{$select.selected.desc}}</ui-select-match>
                                 <ui-select-choices repeat="item in ctr.payMethodList | filter: $select.search">
@@ -287,13 +297,13 @@
                     <div class="row" style="margin-top: 1%">
                       <div class="col-md-4" style="margin-top: 1%"> القيمة </div>
                       <div class="col-md-8" style="padding: 0">
-                       <input readonly ui-br-phone-number-mask  date-only ng-model="ctr.addModel.date" class="form-control"/>
+                       <input type="number" ng-model="ctr.contract.payValue" class="form-control"/>
                      </div>
                     </div>
                     <div class="row" style="margin-top: 1%">
                       <div class="col-md-4" style="margin-top: 1%"> الباقي   </div>
                      <div class="col-md-8" style="padding: 0">
-                       <input readonly ui-br-phone-number-mask  date-only ng-model="ctr.addModel.date" class="form-control"/>
+                       <input disabled type="number" ng-model="ctr.contract.payRest" class="form-control"/>
                      </div>
                     </div>
       </div>
@@ -327,7 +337,7 @@
                   <div class="row" style="margin-top: 1%">
                     <div class="col-md-12" style="text-align:left;padding-left:1.25rem;padding-bottom: 1%">
                     
-                       <a class="btn btn-primary" href="AddContract" style="color:white;">حفظ</a>
+                       <a class="btn btn-primary" ng-click="ctr.saveNew()" style="color:white;">حفظ</a>
               
                     </div>
                   </div>

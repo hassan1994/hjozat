@@ -14,6 +14,7 @@
   <!-- Custom fonts for this template-->
   <link href="<?php echo base_url(); ?>assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
    <link href="<?php echo base_url(); ?>assets/css/rtl.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo base_url(); ?>assets/css/ngPrint.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
@@ -35,8 +36,9 @@
   <script src="<?php echo base_url(); ?>assets/js/angular/angular-resource.js"></script>
   <script src="<?php echo base_url(); ?>assets/js/angular/angular-sanitize.js"></script>
   <script src="<?php echo base_url(); ?>assets/js/angular/angular-touch.js"></script>
-  <script src="<?php echo base_url(); ?>assets/js/angular/ngprogress.js"></script> 
-  <script src="<?php echo base_url(); ?>assets/js/angular/angular-datatables.min.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/angular/ngprogress.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/angular/ngPrint.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/angular/angular-datatables.min.js"></script>
   
    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-input-masks/4.4.1/angular-input-masks-standalone.min.js"></script>
    <script src="<?php echo base_url(); ?>assets/js/angular/angularjs-datetime-picker.js"></script>
@@ -49,6 +51,14 @@
   <script src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
   <style>
+    .alertSpan{
+      position: absolute !important;
+       height: 34px !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 1000 !important;
+    left: 9px  !important;
+    }
     .alert {
             position: fixed;
             z-index: 1;

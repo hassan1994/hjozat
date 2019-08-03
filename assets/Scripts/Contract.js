@@ -1,5 +1,5 @@
-    var app = angular.module('MyApp', ['ngProgress','datatables','ui.utils.masks','angularjs-datetime-picker','ngSanitize', 'ui.select']);
-    app.controller('Ctrl', function (DataService, $timeout) {
+    var app = angular.module('MyApp', ['ngProgress','datatables','ui.utils.masks','angularjs-datetime-picker','ngSanitize', 'ui.select','ngPrint']);
+    app.controller('Ctrl', function (DataService, $timeout,$scope) {
         var vm = this;
       debugger
         vm.init = init;
@@ -112,6 +112,7 @@
             //table info
 
             DataService.init().then(function (response) {
+                console.log("repsonse");
             console.log(response);
             vm.contractList = response.data;
             debugger
@@ -168,28 +169,88 @@
         vm.deletedModel={};
           vm.deleteModel = deleteModel;
          function deleteModel() {
-            //table info
-            
+             //table info
 
-            DataService.deleteModel(vm.deletedModel).then(function (response) {
-                console.log(response);
-            init();
-              SuccessAlert("تم الحذف بنجاح")
-               $("#DeleteModal").modal("hide")
-            }).catch(function (error) {
+
+             DataService.deleteModel(vm.deletedModel).then(function (response) {
+                 console.log(response);
                  init();
-                   $("#DeleteModal").modal("hide")
+                 SuccessAlert("تم الحذف بنجاح")
+                 $("#DeleteModal").modal("hide")
+             }).catch(function (error) {
+                 init();
+                 $("#DeleteModal").modal("hide")
+                 ErrorAlert("فشل عملية الحذف")
+                 console.log(error);
+             })
+
+
+         }
+
+        $scope.$watch(function getfromdate() { return vm.contract.contractDate } , function(newValue, oldValue) {
+            vm.contract.contractDay = vm.getDay(vm.contract.contractDate);
+        });
+         vm.contract.totalValue=0
+         vm.AddService=AddService;
+        vm.totalServiceValue = 0;
+        function AddService(){
+            var tmp = {};
+            tmp.serviecID = vm.service.id;
+            tmp.serviceValue = vm.service.value * vm.serviceCount;
+            vm.totalServiceValue += tmp.serviceValue;
+            vm.contract.totalValue +=tmp.serviceValue;
+            tmp.serviceCount = vm.serviceCount;
+            tmp.serviceName = vm.service.name;
+            vm.contract.services.push(tmp);
+        }
+        vm.DeleteService=DeleteService;
+        function DeleteService(index){
+            vm.totalServiceValue -=vm.contract.services[index].serviceValue;
+            vm.contract.totalValue -=vm.contract.services[index].serviceValue;
+            vm.contract.services.splice(index, 1);
+        }
+
+
+        vm.printToCart = function(printSectionId) {
+            var innerContents = document.getElementById(printSectionId).innerHTML;
+            var popupWinindow = window.open('', '_blank', 'width=1200,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
+            popupWinindow.document.open();
+            popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+            popupWinindow.document.close();
+        }
+        vm.saveNew=saveNew
+        function saveNew(){
+            debugger
+            DataService.saveNew(vm.contract).then(function (response) {
+                debugger
+                console.log(response);
+
+            }).catch(function (error) {
+
+
                 ErrorAlert("فشل عملية الحذف")
-                                console.log(error);
+                console.log(error);
             })
 
-
-
-
-
         }
-     
-       
+        vm.sumTotalValue=sumTotalValue;
+        function sumTotalValue(){
+            vm.contract.totalValue +=  vm.contract.value;
+        }
+        $scope.$watch(function getTotalValue() { return  vm.contract.totalValue } , function(newValue, oldValue) {
+            vm.contract.vat = newValue *vm.comp.taxRatio/100;
+        });
+        $scope.$watch(function getTotalValue() { return  vm.contract.totalValue } , function(newValue, oldValue) {
+            vm.contract.netValue = vm.contract.totalValue + vm.contract.vat;
+        });
+        $scope.$watch(function getTotalValue() { return  vm.contract.payValue } , function(newValue, oldValue) {
+            vm.contract.payRest = vm.contract.totalValue - vm.contract.payValue;
+        });
+        vm.setValue=setValue;
+        function setValue(value){
+            vm.contract.value = parseInt(value)
+        }
+
     });
 
     app.service('DataService', function ($http) {
@@ -214,7 +275,9 @@
             },
             deleteModel  : function (model) {
                 return $http.post('/hjozat/Contract/delete',model);
-            },         
+            },saveNew: function (obj) {
+                return $http.post('/hjozat/Contract/saveNew',obj);
+            },
            
 
         };

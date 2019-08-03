@@ -65,9 +65,12 @@
         <div class="modal-body">
         <div class="col-md-12" >
         <div class="col-md-3" style="margin-top: 0.2rem;padding: 0">
-          التاريخ*
+          التاريخ <span>*</span>
       </div> 
      <div class="col-md-8 input-group" >
+     <span class="alertSpan" style="left: 21px !important;">
+             <i class="far fa-calendar-alt"></i>
+            </span>
         <input datetime-picker date-format="yyyy-MM-dd" readonly date-only ng-model="ctr.addModel.date" class="form-control"/>
          
       </div> 
@@ -153,6 +156,9 @@
           التاريخ*
       </div> 
      <div class="col-md-8 input-group" >
+     <span class="alertSpan" style="left: 21px !important;">
+             <i class="far fa-calendar-alt"></i>
+            </span>
         <input datetime-picker date-format="yyyy-MM-dd" readonly date-only ng-model="ctr.editModel.date" class="form-control"/>
          
       </div> 
